@@ -88,7 +88,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`[Ayyappa Bhajan Guide] Server running securely on port ${PORT}`);
+const HOST = '0.0.0.0';
+app.listen(PORT, HOST, () => {
+  console.log(`[Ayyappa Bhajan Guide] Server running securely on ${HOST}:${PORT}`);
   console.log(`[Scope] Nellore, Andhra Pradesh Pilot`);
 });

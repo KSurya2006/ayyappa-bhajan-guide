@@ -63,10 +63,11 @@ This repository is pre-configured for deployment with **Render** hosting the Exp
 6. Click **"Deploy"**.
 7. Vercel will build and deploy your site in ~30 seconds, generating your live URL.
 
-### 🌟 Active Production Frontend:
-* **Live Vercel URL**: **[https://client-green-six-90.vercel.app](https://client-green-six-90.vercel.app)**
-* **Live Audio Asset**: `https://client-green-six-90.vercel.app/audio/ayyappa-devotional.mp3` (HTTP 200)
-* **Vercel Project Dashboard**: `https://vercel.com/jayasree3/client`
+### 🌟 Active Production Frontend (KSurya2006 Account):
+* **Live Vercel URL**: **[https://client-mu-one-26.vercel.app](https://client-mu-one-26.vercel.app)**
+* **Live Audio Asset**: `https://client-mu-one-26.vercel.app/audio/ayyappa-devotional.mp3` (HTTP 200, 465,187 bytes)
+* **Vercel Project Dashboard**: `https://vercel.com/ksuryaksurya216-7825s-projects/client`
+* **Vercel Account**: `ksuryaksurya216-7825` (`ksuryaksurya216@gmail.com`)
 
 ---
 
@@ -74,9 +75,9 @@ This repository is pre-configured for deployment with **Render** hosting the Exp
 
 ### A. Update Backend CORS on Render
 1. Go to your Render backend $\rightarrow$ **Environment**.
-2. Set `CLIENT_ORIGIN` to your newly created Vercel URL:
+2. Set `CLIENT_ORIGIN` to your live Vercel URL:
    ```
-   CLIENT_ORIGIN=https://ayyappa-bhajan-guide.vercel.app
+   CLIENT_ORIGIN=https://client-mu-one-26.vercel.app
    ```
 3. Save changes (Render will automatically redeploy).
 

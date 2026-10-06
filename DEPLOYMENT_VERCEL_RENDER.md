@@ -8,10 +8,10 @@ This repository is pre-configured for deployment with **Render** hosting the Exp
 ## 1. Deploying the Backend on Render (`server/`)
 
 ### Option A: Using the Render Blueprint (Recommended - 1 Click)
-1. Push your repository to **GitHub** or **GitLab**.
+1. Repository URL: **https://github.com/KSurya2006/ayyappa-bhajan-guide** (already pushed on branch `main` with tag `v1.0.0-nellore-pilot`).
 2. Log in to [Render Dashboard](https://dashboard.render.com/).
 3. Click **"New +"** $\rightarrow$ **"Blueprint"**.
-4. Select your Ayyappa Bhajan Guide repository.
+4. Select `KSurya2006/ayyappa-bhajan-guide`.
 5. Render will automatically read [`render.yaml`](file:///c:/Ayapa/render.yaml) and configure:
    - Service Name: `ayyappa-bhajan-guide-backend`
    - Runtime: `Node`
@@ -50,7 +50,7 @@ This repository is pre-configured for deployment with **Render** hosting the Exp
 ### Step-by-Step Vercel Setup:
 1. Log in to the [Vercel Dashboard](https://vercel.com/).
 2. Click **"Add New..."** $\rightarrow$ **"Project"**.
-3. Import your Ayyappa Bhajan Guide repository from GitHub.
+3. Import **`KSurya2006/ayyappa-bhajan-guide`** from GitHub.
 4. In the **Configure Project** screen:
    - **Framework Preset**: `Vite` (automatically detected)
    - **Root Directory**: Click *Edit* and select **`client`** (or leave as root, as both `client/vercel.json` and root `vercel.json` are pre-configured).

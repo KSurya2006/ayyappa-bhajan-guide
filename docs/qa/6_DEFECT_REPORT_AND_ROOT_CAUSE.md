@@ -163,5 +163,42 @@ All 7 defects have been resolved with targeted, non-breaking modifications and v
 | **DEF-06** | `server/middleware/validator.js` | Added ISO calendar round-trip parsing check `parsedDate.toISOString().split('T')[0] === date` | `TC-BVA-09` | **PASS (Rejects invalid dates like 2026-99-99)** |
 | **DEF-07** | `server/scripts/full-qa-test.js` | Encoded query string via `encodeURIComponent` | `TC-SEC-08` | **PASS (SQLi parameterized defense verified)** |
 
-**Final Post-Fix Regression Status**: **100% PASS (50/50 tests passed)**. Zero active defects.
+**Final Post-Fix Regression Status**: **100% PASS (50/50 tests passed)**. Zero active defects in base test harness.
+
+---
+
+## 4. Production Deployment Defect Log
+
+### Defect ID: DEF-PROD-01
+- **Title**: Production Data Inconsistency & Frontend Fallback Re-injects Deleted Dummy Bhajans Across Multi-Cloud Backends
+- **Severity**: Critical | **Priority**: P1 (Immediate)
+- **Environment**: Production (Vercel Frontend, Multi-Cloud Render vs Railway Backends)
+- **Steps to Reproduce**:
+  1. Super Admin purges sample/demo records via `/api/admin/clean-demo-data`.
+  2. Public API `/api/bhajans` returns `{ success: true, count: 0, data: [] }`.
+  3. A new visitor opens the site on Device B (or private window).
+  4. Frontend evaluates `json.data && json.data.length > 0 ? json.data : DEFAULT_NELLORE_BHAJANS`.
+  5. Because `json.data.length === 0`, frontend overrides the empty database result with `DEFAULT_NELLORE_BHAJANS`.
+  6. Device B displays the 3 deleted dummy records while Device A displays an empty list.
+  7. Furthermore, Vercel was routing to Render while Railway ran independently with an isolated unlinked SQLite database.
+- **Expected Result**:
+  - When records are deleted, all devices and browsers must receive the identical single source of truth.
+  - No dummy records should ever be hardcoded or silently substituted.
+  - All production clients must communicate with one unified production backend and one database.
+- **Actual Result**:
+  - Device B showed deleted dummy records from frontend fallback.
+  - Render re-seeded records on ephemeral container restart.
+- **Root Cause**:
+  1. Frontend ternary `json.data && json.data.length > 0 ? json.data : DEFAULT_NELLORE_BHAJANS` in `client/src/services/api.ts`.
+  2. Initial React state initialized to `DEFAULT_NELLORE_BHAJANS` in `client/src/App.tsx`.
+  3. Automatic database seeding `if (bhajanCount === 0)` on server startup in `server/db.js`.
+  4. Split backend: Vercel rewrite pointed to Render instead of Railway.
+  5. Absence of `Cache-Control: no-cache, no-store` on public bhajan endpoints.
+- **Fix Applied**:
+  1. Removed `DEFAULT_NELLORE_BHAJANS` completely from frontend codebase; if database returns `[]`, UI cleanly renders empty state.
+  2. Removed auto-reseeding of sample bhajans in `server/db.js` so purged records stay purged.
+  3. Configured `client/vercel.json` and client API to point exclusively to Railway (`https://ayyappa-bhajan-guide-backend-production-0b09.up.railway.app`).
+  4. Enforced HTTP headers: `Cache-Control: no-store, no-cache, must-revalidate` on `/api/bhajans`.
+  5. Purged sample demo records from Railway production database.
+- **Verification Result**: **PASS (Production Data Consistency Verified across all clients)**.
 

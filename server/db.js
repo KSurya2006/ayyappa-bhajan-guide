@@ -114,85 +114,8 @@ export function initDatabase() {
     );
   }
 
-  // Seed sample bhajans if table is empty (flagged with is_sample = 1)
-  const bhajanCount = db.prepare('SELECT COUNT(*) as count FROM bhajans').get().count;
-  if (bhajanCount === 0) {
-    const insertBhajan = db.prepare(`
-      INSERT INTO bhajans (
-        name, name_te, date, start_time, venue, venue_te, area, area_te,
-        map_url, latitude, longitude, organizer_name, contact_number,
-        description, description_te, status, is_published, is_sample
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `);
+  // Production Database: Do not auto-seed sample bhajans on startup so deleted data stays deleted.
 
-    // Sample 1: Upcoming in Stonehousepet, Nellore
-    insertBhajan.run(
-      'Maha Padi Pooja & Sangeetha Bhajan',
-      'మహా పడిపూజ & సంగీత భజన',
-      new Date(Date.now() + 86400000).toISOString().split('T')[0], // Tomorrow
-      '06:30 PM',
-      'Sri Ayyappa Swamy Temple, Stonehousepet',
-      'శ్రీ అయ్యప్ప స్వామి దేవాలయం, స్టోన్‌హౌస్‌పేట',
-      'Stonehousepet, Nellore',
-      'స్టోన్‌హౌస్‌పేట, నెల్లూరు',
-      'https://maps.google.com/?q=14.4426,79.9865',
-      14.4426,
-      79.9865,
-      'Suresh Guruswami',
-      '9848012345',
-      'Special 18 step Padi Pooja with devotional songs, Harivarasanam, and Anna Dhanam afterwards.',
-      'భక్తిగీతాలు, హరివరాసనం మరియు అన్నదానంతో కూడిన ప్రత్యేక 18 మెట్ల పడిపూజ.',
-      'approved',
-      1,
-      1
-    );
-
-    // Sample 2: Today's bhajan in VRC Centre, Nellore
-    insertBhajan.run(
-      'Deeparadhana & Saranu Gosha Bhajan',
-      'దీపారాధన & శరణు ఘోష భజన',
-      new Date().toISOString().split('T')[0], // Today
-      '07:00 PM',
-      'VRC Centre Kalyana Mandapam, Nellore',
-      'వి.ఆర్.సి సెంటర్ కళ్యాణ మండపం, నెల్లూరు',
-      'VRC Centre, Nellore',
-      'వి.ఆర్.సి సెంటర్, నెల్లూరు',
-      'https://maps.google.com/?q=14.4445,79.9878',
-      14.4445,
-      79.9878,
-      'Venkatesh Swami',
-      '9440123456',
-      'Ayyappa bhajan by local mandali devotees followed by prasadam distribution.',
-      'స్థానిక మండల భక్తులచే అయ్యప్ప భజన, అనంతరం ప్రసాద వితరణ.',
-      'approved',
-      1,
-      1
-    );
-
-    // Sample 3: Upcoming in Vedayapalem, Nellore
-    insertBhajan.run(
-      'Akhanda Bhajan & Harivarasanam',
-      'అఖండ భజన & హరివరాసనం',
-      new Date(Date.now() + 172800000).toISOString().split('T')[0], // Day after tomorrow
-      '06:00 PM',
-      'Community Hall, Vedayapalem',
-      'కమ్యూనిటీ హాల్, వేదాయపాలెం',
-      'Vedayapalem, Nellore',
-      'వేదాయపాలెం, నెల్లూరు',
-      'https://maps.google.com/?q=14.4215,79.9620',
-      14.4215,
-      79.9620,
-      'Ramesh Swami',
-      '9988776655',
-      'Melodious bhajan by Saranam mandali. Devotees are cordially requested to join with families.',
-      'శరణం మండలిచే భజన కార్యక్రమం. భక్తులందరూ కుటుంబ సమేతంగా పాల్గొనవలసిందిగా మనవి.',
-      'approved',
-      1,
-      1
-    );
-
-    console.log('[Database] Seeded initial Nellore sample bhajans with is_sample=1.');
-  }
 
   // Seed default content blocks if empty
   const contentCount = db.prepare('SELECT COUNT(*) as count FROM content_blocks').get().count;

@@ -14,6 +14,9 @@ router.use(publicApiLimiter);
  * Strictly filters out pending, draft, or rejected events.
  */
 router.get('/bhajans', (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
   try {
     const { area, date, filter } = req.query;
     let query = `
@@ -75,6 +78,9 @@ router.get('/bhajans', (req, res) => {
  * Returns 404 for any pending or unpublished bhajan.
  */
 router.get('/bhajans/:id', (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
   try {
     const bhajanId = parseInt(req.params.id, 10);
     if (isNaN(bhajanId)) {

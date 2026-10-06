@@ -1,0 +1,26 @@
+services:
+  ayyappa-guide:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ayyappa_bhajan_guide
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - JWT_SECRET=ayyappa_nellore_pilot_super_admin_secret_key_secure_2026
+      - ADMIN_USERNAME=admin
+      - ADMIN_INITIAL_PASSWORD=AyyappaAdmin2026!
+      - CLIENT_ORIGIN=http://localhost:5000
+    volumes:
+      - ayyappa_db_data:/app/data
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/api/bhajans"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  ayyappa_db_data:

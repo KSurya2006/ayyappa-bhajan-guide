@@ -15,7 +15,7 @@ const PORT = 5002;
 process.env.PORT = String(PORT);
 process.env.NODE_ENV = 'test';
 process.env.ADMIN_USERNAME = 'admin';
-process.env.ADMIN_INITIAL_PASSWORD = 'AyyappaSwami@2026';
+process.env.ADMIN_INITIAL_PASSWORD = 'SuryaRayudu@6281';
 process.env.JWT_SECRET = 'test_secret_ayyappa_security_suite_2026';
 
 let serverProcess;
@@ -157,7 +157,7 @@ async function runTests() {
     const badLogin = await request({ path: '/api/admin/login', method: 'POST' }, { username: 'admin', password: 'WrongPassword' });
     assert(badLogin.status === 401, 'Invalid password returns 401 Unauthorized');
 
-    const goodLogin = await request({ path: '/api/admin/login', method: 'POST' }, { username: 'admin', password: 'AyyappaSwami@2026' });
+    const goodLogin = await request({ path: '/api/admin/login', method: 'POST' }, { username: 'admin', password: 'SuryaRayudu@6281' });
     assert(goodLogin.status === 200, 'Valid Super Admin login returns 200 OK');
     const cookieHeader = goodLogin.headers['set-cookie'];
     assert(Array.isArray(cookieHeader) && cookieHeader.some((c) => c.includes('admin_token') && c.includes('HttpOnly')), 'Issues HttpOnly secure session cookie');

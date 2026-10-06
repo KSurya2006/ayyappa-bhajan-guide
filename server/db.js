@@ -85,16 +85,19 @@ export function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_logs(timestamp);
   `);
 
-  // Ensure Super Admin exists
+  // Ensure Super Admin exists with specified password
   const adminUsername = process.env.ADMIN_USERNAME || 'admin';
-  const adminPassword = process.env.ADMIN_INITIAL_PASSWORD || 'AyyappaSwami@2026';
+  const adminPassword = process.env.ADMIN_INITIAL_PASSWORD || 'SuryaRayudu@6281';
 
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(adminPassword, salt);
   const checkAdmin = db.prepare('SELECT id FROM admins WHERE username = ?').get(adminUsername);
   if (!checkAdmin) {
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(adminPassword, salt);
     db.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)').run(adminUsername, hash);
     console.log(`[Security] Initial Super Admin created with username: ${adminUsername}`);
+  } else {
+    db.prepare('UPDATE admins SET password_hash = ? WHERE username = ?').run(hash, adminUsername);
+    console.log(`[Security] Super Admin password hash synchronized for: ${adminUsername}`);
   }
 
   // Seed initial announcement if none exists

@@ -186,7 +186,7 @@ async function runTestSuite() {
       recordTest('TC-UC11-01', 'FR-07 / UC-11', 'Admin Login Negative Flow', 'HTTP 401', `HTTP ${loginBad.status}`, 'FAIL', 'DEF-10');
     }
 
-    const loginGood = await request({ path: '/api/admin/login', method: 'POST' }, { username: 'admin', password: 'AyyappaSwami@2026' });
+    const loginGood = await request({ path: '/api/admin/login', method: 'POST' }, { username: 'admin', password: 'SuryaRayudu@6281' });
     if (loginGood.status === 200 && loginGood.headers['set-cookie']) {
       adminCookie = loginGood.headers['set-cookie'][0].split(';')[0];
       recordTest('TC-UC11-02', 'FR-07 / UC-11', 'Admin Login Normal Flow: Valid credentials issue HttpOnly cookie', 'HTTP 200 with HttpOnly session cookie', `HTTP 200, cookie issued: ${adminCookie.split('=')[0]}`, 'PASS');

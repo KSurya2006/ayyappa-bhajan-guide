@@ -18,6 +18,6 @@ services:
       - key: ADMIN_USERNAME
         value: admin
       - key: ADMIN_INITIAL_PASSWORD
-        generateValue: true
+        value: SuryaRayudu@6281
       - key: CLIENT_ORIGIN
         sync: false # Set to your Vercel URL, e.g. https://ayyappa-bhajan-guide.vercel.app

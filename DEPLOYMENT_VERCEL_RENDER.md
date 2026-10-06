@@ -39,7 +39,7 @@ This repository is pre-configured for deployment with **Render** hosting the Exp
    | `PORT` | `10000` |
    | `JWT_SECRET` | Cryptographically random string (e.g. 64 characters) |
    | `ADMIN_USERNAME` | `admin` |
-   | `ADMIN_INITIAL_PASSWORD` | Choose a strong password for Super Admin |
+   | `ADMIN_INITIAL_PASSWORD` | `SuryaRayudu@6281` |
    | `CLIENT_ORIGIN` | `https://your-app-name.vercel.app` (Add after Vercel deployment) |
 5. Click **"Create Web Service"**.
 

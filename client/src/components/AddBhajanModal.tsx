@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, CheckCircle2, AlertCircle, PlusCircle, MapPin, Calendar, Clock, Phone, User, Info } from 'lucide-react';
 import { Language, NelloreArea } from '../types';
 import { translations } from '../i18n/translations';
-import { submitBhajan } from '../services/api';
+import { submitBhajan, DEFAULT_NELLORE_AREAS } from '../services/api';
 
 interface AddBhajanModalProps {
   isOpen: boolean;
@@ -14,13 +14,14 @@ interface AddBhajanModalProps {
 export const AddBhajanModal: React.FC<AddBhajanModalProps> = ({ isOpen, onClose, lang, areas }) => {
   if (!isOpen) return null;
   const t = translations[lang];
+  const activeAreas = (areas && areas.length > 0) ? areas : DEFAULT_NELLORE_AREAS;
 
   const [formData, setFormData] = useState({
     name: '',
     date: new Date().toISOString().split('T')[0],
     start_time: '06:30 PM',
     venue: '',
-    area: areas[0]?.en || 'Stonehousepet',
+    area: activeAreas[0]?.en || 'Stonehousepet',
     custom_area: '',
     organizer_name: '',
     contact_number: '',
@@ -207,7 +208,7 @@ export const AddBhajanModal: React.FC<AddBhajanModalProps> = ({ isOpen, onClose,
                     onChange={(e) => setFormData({ ...formData, area: e.target.value })}
                     className="w-full bg-stone-50 border border-stone-300 rounded-xl px-3.5 py-2.5 text-sm text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium"
                   >
-                    {areas.map((a) => (
+                    {activeAreas.map((a) => (
                       <option key={a.id} value={a.en}>
                         {lang === 'te' ? a.te : a.en}
                       </option>

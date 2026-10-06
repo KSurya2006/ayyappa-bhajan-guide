@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Language, Bhajan, NelloreArea, Announcement, AdminUser } from './types';
-import { fetchBhajans, fetchAreas, fetchAnnouncements, checkAdminAuth } from './services/api';
+import { fetchBhajans, fetchAreas, fetchAnnouncements, checkAdminAuth, DEFAULT_NELLORE_AREAS } from './services/api';
 import { Navbar } from './components/Navbar';
 import { AnnouncementsBanner } from './components/AnnouncementsBanner';
 import { Hero } from './components/Hero';
@@ -19,7 +19,7 @@ import { DevotionalAudioPlayer } from './components/DevotionalAudioPlayer';
 export function App() {
   const [lang, setLang] = useState<Language>('te');
   const [bhajans, setBhajans] = useState<Bhajan[]>([]);
-  const [areas, setAreas] = useState<NelloreArea[]>([]);
+  const [areas, setAreas] = useState<NelloreArea[]>(DEFAULT_NELLORE_AREAS);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
 

@@ -73,7 +73,7 @@ PORT=5000
 NODE_ENV=development
 JWT_SECRET=your_secure_secret_key
 ADMIN_USERNAME=admin
-ADMIN_INITIAL_PASSWORD=AyyappaSwami@2026
+ADMIN_INITIAL_PASSWORD=SuryaRayudu@6281
 CLIENT_ORIGIN=http://localhost:5173
 ```
 

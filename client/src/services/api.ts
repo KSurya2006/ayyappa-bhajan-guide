@@ -1,6 +1,26 @@
 import { Bhajan, Announcement, NelloreArea, AdminStats, AuditLog } from '../types';
 
-const API_BASE = '/api';
+const BACKEND_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+const API_BASE = `${BACKEND_URL}/api`;
+
+let authToken: string | null = typeof window !== 'undefined' ? sessionStorage.getItem('admin_token_jwt') : null;
+
+export function setAuthToken(token: string | null) {
+  authToken = token;
+  if (token) {
+    sessionStorage.setItem('admin_token_jwt', token);
+  } else {
+    sessionStorage.removeItem('admin_token_jwt');
+  }
+}
+
+function getAuthHeaders(extraHeaders: Record<string, string> = {}): Record<string, string> {
+  const headers: Record<string, string> = { ...extraHeaders };
+  if (authToken) {
+    headers['Authorization'] = `Bearer ${authToken}`;
+  }
+  return headers;
+}
 
 export async function fetchBhajans(params?: { area?: string; date?: string; filter?: string }): Promise<Bhajan[]> {
   const query = new URLSearchParams();
@@ -63,10 +83,14 @@ export async function adminLogin(username: string, password: string) {
   });
   const json = await res.json();
   if (!json.success) throw new Error(json.error || 'Authentication failed');
+  if (json.token) {
+    setAuthToken(json.token);
+  }
   return json;
 }
 
 export async function adminLogout() {
+  setAuthToken(null);
   const res = await fetch(`${API_BASE}/admin/logout`, {
     method: 'POST',
     credentials: 'include'
@@ -76,7 +100,10 @@ export async function adminLogout() {
 
 export async function checkAdminAuth() {
   try {
-    const res = await fetch(`${API_BASE}/admin/me`, { credentials: 'include' });
+    const res = await fetch(`${API_BASE}/admin/me`, {
+      headers: getAuthHeaders(),
+      credentials: 'include'
+    });
     const json = await res.json();
     return json.success && json.authenticated ? json.user : null;
   } catch (err) {
@@ -85,7 +112,10 @@ export async function checkAdminAuth() {
 }
 
 export async function fetchAdminStats(): Promise<AdminStats> {
-  const res = await fetch(`${API_BASE}/admin/stats`, { credentials: 'include' });
+  const res = await fetch(`${API_BASE}/admin/stats`, {
+    headers: getAuthHeaders(),
+    credentials: 'include'
+  });
   const json = await res.json();
   if (!json.success) throw new Error(json.error || 'Failed to fetch admin stats');
   return json.data;
@@ -93,7 +123,10 @@ export async function fetchAdminStats(): Promise<AdminStats> {
 
 export async function fetchAdminBhajans(status?: string): Promise<Bhajan[]> {
   const query = status ? `?status=${status}` : '';
-  const res = await fetch(`${API_BASE}/admin/bhajans${query}`, { credentials: 'include' });
+  const res = await fetch(`${API_BASE}/admin/bhajans${query}`, {
+    headers: getAuthHeaders(),
+    credentials: 'include'
+  });
   const json = await res.json();
   if (!json.success) throw new Error(json.error || 'Failed to fetch admin bhajans');
   return json.data;
@@ -102,7 +135,7 @@ export async function fetchAdminBhajans(status?: string): Promise<Bhajan[]> {
 export async function adminCreateBhajan(data: Partial<Bhajan>) {
   const res = await fetch(`${API_BASE}/admin/bhajans`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
     credentials: 'include',
     body: JSON.stringify(data)
   });
@@ -114,7 +147,7 @@ export async function adminCreateBhajan(data: Partial<Bhajan>) {
 export async function adminUpdateBhajan(id: number, data: Partial<Bhajan>) {
   const res = await fetch(`${API_BASE}/admin/bhajans/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
     credentials: 'include',
     body: JSON.stringify(data)
   });
@@ -126,7 +159,7 @@ export async function adminUpdateBhajan(id: number, data: Partial<Bhajan>) {
 export async function adminPatchStatus(id: number, action: 'approve' | 'reject' | 'publish' | 'unpublish' | 'cancel' | 'complete') {
   const res = await fetch(`${API_BASE}/admin/bhajans/${id}/status`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
     credentials: 'include',
     body: JSON.stringify({ action })
   });
@@ -138,6 +171,7 @@ export async function adminPatchStatus(id: number, action: 'approve' | 'reject' 
 export async function adminDeleteBhajan(id: number) {
   const res = await fetch(`${API_BASE}/admin/bhajans/${id}`, {
     method: 'DELETE',
+    headers: getAuthHeaders(),
     credentials: 'include'
   });
   const json = await res.json();
@@ -148,6 +182,7 @@ export async function adminDeleteBhajan(id: number) {
 export async function adminCleanDemoData(): Promise<{ deletedCount: number; message: string }> {
   const res = await fetch(`${API_BASE}/admin/clean-demo-data`, {
     method: 'POST',
+    headers: getAuthHeaders(),
     credentials: 'include'
   });
   const json = await res.json();
@@ -156,7 +191,10 @@ export async function adminCleanDemoData(): Promise<{ deletedCount: number; mess
 }
 
 export async function fetchAuditLogs(): Promise<AuditLog[]> {
-  const res = await fetch(`${API_BASE}/admin/audit-logs`, { credentials: 'include' });
+  const res = await fetch(`${API_BASE}/admin/audit-logs`, {
+    headers: getAuthHeaders(),
+    credentials: 'include'
+  });
   const json = await res.json();
   if (!json.success) throw new Error(json.error || 'Failed to fetch audit logs');
   return json.data;
@@ -165,7 +203,7 @@ export async function fetchAuditLogs(): Promise<AuditLog[]> {
 export async function adminCreateAnnouncement(data: { title_en: string; title_te: string; content_en: string; content_te: string; is_published: boolean }) {
   const res = await fetch(`${API_BASE}/admin/announcements`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
     credentials: 'include',
     body: JSON.stringify(data)
   });
@@ -177,6 +215,7 @@ export async function adminCreateAnnouncement(data: { title_en: string; title_te
 export async function adminDeleteAnnouncement(id: number) {
   const res = await fetch(`${API_BASE}/admin/announcements/${id}`, {
     method: 'DELETE',
+    headers: getAuthHeaders(),
     credentials: 'include'
   });
   const json = await res.json();
@@ -185,7 +224,10 @@ export async function adminDeleteAnnouncement(id: number) {
 }
 
 export async function fetchContentBlocks() {
-  const res = await fetch(`${API_BASE}/admin/content`, { credentials: 'include' });
+  const res = await fetch(`${API_BASE}/admin/content`, {
+    headers: getAuthHeaders(),
+    credentials: 'include'
+  });
   const json = await res.json();
   return json.success ? json.data : [];
 }
@@ -199,7 +241,7 @@ export async function fetchContentByKey(key: string) {
 export async function adminUpdateContent(key: string, data: { title_en?: string; title_te?: string; content_en: string; content_te: string }) {
   const res = await fetch(`${API_BASE}/admin/content/${key}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
     credentials: 'include',
     body: JSON.stringify(data)
   });
@@ -207,4 +249,3 @@ export async function adminUpdateContent(key: string, data: { title_en?: string;
   if (!json.success) throw new Error(json.error || 'Failed to update content');
   return json;
 }
-

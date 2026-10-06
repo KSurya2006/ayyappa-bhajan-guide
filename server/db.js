@@ -9,7 +9,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const dbPath = path.resolve(__dirname, '..', 'ayyappa.db');
+const dbPath = process.env.DB_PATH ? path.resolve(process.env.DB_PATH) : path.resolve(__dirname, '..', 'ayyappa.db');
 const db = new Database(dbPath);
 
 // Enable WAL mode for performance and concurrent read/writes

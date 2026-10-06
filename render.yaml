@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: ayyappa-bhajan-guide-backend
+    runtime: node
+    plan: free
+    region: singapore # Closest region to India / Andhra Pradesh
+    buildCommand: npm install
+    startCommand: node server/index.js
+    healthCheckPath: /api/bhajans
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_INITIAL_PASSWORD
+        generateValue: true
+      - key: CLIENT_ORIGIN
+        sync: false # Set to your Vercel URL, e.g. https://ayyappa-bhajan-guide.vercel.app

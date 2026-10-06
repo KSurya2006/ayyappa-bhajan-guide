@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-06T07:38:00.611Z",
+  "timestamp": "2026-10-06T07:50:48.634Z",
   "metrics": {
     "total": 50,
     "passed": 50,
@@ -73,7 +73,7 @@
       "requirement": "FR-06 / UC-10",
       "scenario": "Organizer Submits Bhajan: Valid form submitted",
       "expected": "HTTP 201 with generated submission ID",
-      "actual": "HTTP 201, id: 35",
+      "actual": "HTTP 201, id: 44",
       "status": "PASS",
       "defectId": null,
       "details": ""
@@ -203,7 +203,7 @@
       "requirement": "FR-15 / UC-21",
       "scenario": "Admin Announcements: Create and publish announcement",
       "expected": "HTTP 201 and visible in public GET /api/announcements",
-      "actual": "Created with ID: 6",
+      "actual": "Created with ID: 7",
       "status": "PASS",
       "defectId": null,
       "details": ""

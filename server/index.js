@@ -28,9 +28,22 @@ app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
-// 3. Strict CORS configuration
+// 3. Strict CORS configuration (supports local dev, custom domain, and Vercel deployments)
 app.use(cors({
-  origin: [CLIENT_ORIGIN, 'http://localhost:5173', 'http://localhost:5000', 'http://127.0.0.1:5173'],
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    const allowed = [
+      CLIENT_ORIGIN,
+      'http://localhost:5173',
+      'http://localhost:5000',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:5000'
+    ];
+    if (allowed.includes(origin) || (origin.endsWith('.vercel.app') && origin.startsWith('https://'))) {
+      return callback(null, true);
+    }
+    return callback(new Error('Blocked by CORS policy: Origin not allowed'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']

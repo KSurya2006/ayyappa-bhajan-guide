@@ -59,12 +59,12 @@ router.post('/login', loginLimiter, (req, res) => {
       { expiresIn: '24h' }
     );
 
-    // Set secure HttpOnly cookie
+    // Set secure HttpOnly cookie (supports cross-site Vercel <-> Render in production)
     const isProduction = process.env.NODE_ENV === 'production';
     res.cookie('admin_token', token, {
       httpOnly: true,
-      secure: isProduction, // HTTPS in production
-      sameSite: 'lax',
+      secure: isProduction, // HTTPS required for SameSite=None
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 24 * 60 * 60 * 1000 // 24 hours
     });
 
@@ -73,6 +73,7 @@ router.post('/login', loginLimiter, (req, res) => {
     return res.json({
       success: true,
       message: 'Login successful.',
+      token, // Supports dual auth: cookie + Authorization Bearer header
       user: { id: admin.id, username: admin.username }
     });
   } catch (err) {
@@ -89,9 +90,11 @@ router.post('/login', loginLimiter, (req, res) => {
  * Destroys Super Admin session cookie.
  */
 router.post('/logout', (req, res) => {
+  const isProduction = process.env.NODE_ENV === 'production';
   res.clearCookie('admin_token', {
     httpOnly: true,
-    sameSite: 'lax'
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax'
   });
   return res.json({ success: true, message: 'Logged out successfully.' });
 });

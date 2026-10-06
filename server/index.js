@@ -40,7 +40,12 @@ app.use(cors({
       'http://127.0.0.1:5173',
       'http://127.0.0.1:5000'
     ];
-    if (allowed.includes(origin) || (origin.endsWith('.vercel.app') && origin.startsWith('https://'))) {
+    if (
+      allowed.includes(origin) ||
+      (origin.endsWith('.vercel.app') && origin.startsWith('https://')) ||
+      (origin.endsWith('.railway.app') && origin.startsWith('https://')) ||
+      (origin.endsWith('.up.railway.app') && origin.startsWith('https://'))
+    ) {
       return callback(null, true);
     }
     return callback(new Error('Blocked by CORS policy: Origin not allowed'));

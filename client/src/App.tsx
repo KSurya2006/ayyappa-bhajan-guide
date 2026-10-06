@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Language, Bhajan, NelloreArea, Announcement, AdminUser } from './types';
-import { fetchBhajans, fetchAreas, fetchAnnouncements, checkAdminAuth, DEFAULT_NELLORE_AREAS } from './services/api';
+import { fetchBhajans, fetchAreas, fetchAnnouncements, checkAdminAuth, DEFAULT_NELLORE_AREAS, DEFAULT_NELLORE_BHAJANS, onWakeUpStatusChange } from './services/api';
 import { Navbar } from './components/Navbar';
 import { AnnouncementsBanner } from './components/AnnouncementsBanner';
 import { Hero } from './components/Hero';
@@ -9,19 +9,22 @@ import { FirstTimeGuide } from './components/FirstTimeGuide';
 import { BhajanInfo } from './components/BhajanInfo';
 import { HowToUse } from './components/HowToUse';
 import { Footer } from './components/Footer';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import { BhajanDetailsModal } from './components/BhajanDetailsModal';
 import { AddBhajanModal } from './components/AddBhajanModal';
 import { AdminLoginModal } from './components/admin/AdminLoginModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { WebsiteTour } from './components/WebsiteTour';
 import { DevotionalAudioPlayer } from './components/DevotionalAudioPlayer';
+import { Loader2 } from 'lucide-react';
 
 export function App() {
   const [lang, setLang] = useState<Language>('te');
-  const [bhajans, setBhajans] = useState<Bhajan[]>([]);
+  const [bhajans, setBhajans] = useState<Bhajan[]>(DEFAULT_NELLORE_BHAJANS);
   const [areas, setAreas] = useState<NelloreArea[]>(DEFAULT_NELLORE_AREAS);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isServerWaking, setIsServerWaking] = useState(false);
 
   const [selectedBhajan, setSelectedBhajan] = useState<Bhajan | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -57,12 +60,43 @@ export function App() {
   useEffect(() => {
     loadInitialData();
 
+    // Listen for Render cold-boot wake up notifications
+    const unsubscribeWakeUp = onWakeUpStatusChange((isWaking) => {
+      setIsServerWaking(isWaking);
+    });
+
+    // Check for admin query or hash in URL (?admin=true or ?admin=login or #admin)
+    if (
+      window.location.search.includes('admin') ||
+      window.location.hash.toLowerCase().includes('admin')
+    ) {
+      setIsAdminLoginOpen(true);
+    }
+
+    // Keyboard shortcut (Ctrl+Shift+A) to open Super Admin portal
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+        e.preventDefault();
+        if (adminUser) {
+          setIsAdminDashboardOpen(true);
+        } else {
+          setIsAdminLoginOpen(true);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
     const hasSeenTour = localStorage.getItem('ayyappa_seen_tour');
     if (!hasSeenTour) {
       setIsTourOpen(true);
       localStorage.setItem('ayyappa_seen_tour', 'true');
     }
-  }, []);
+
+    return () => {
+      unsubscribeWakeUp();
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [adminUser]);
 
   const handleAdminLoginSuccess = (user: AdminUser) => {
     setAdminUser(user);
@@ -70,7 +104,19 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-amber-50/40 text-stone-900 selection:bg-amber-500 selection:text-stone-950">
+    <div className="min-h-screen flex flex-col bg-amber-50/40 text-stone-900 selection:bg-amber-500 selection:text-stone-950 pb-16 md:pb-0">
+      {/* Devotional Server Cold-Boot Status Banner */}
+      {isServerWaking && (
+        <div className="bg-amber-600 text-stone-950 px-4 py-2 text-center text-xs font-semibold flex items-center justify-center space-x-2 shadow-md animate-pulse">
+          <Loader2 className="w-4 h-4 animate-spin text-stone-950" />
+          <span>
+            {lang === 'te'
+              ? 'స్వామి సన్నిధి సర్వర్ కనెక్ట్ అవుతోంది (దయచేసి కొన్ని క్షణాలు వేచి ఉండండి)...'
+              : 'Connecting to devotional server... (Waking up, please wait a few seconds)'}
+          </span>
+        </div>
+      )}
+
       <Navbar
         lang={lang}
         onLanguageChange={setLang}
@@ -118,14 +164,16 @@ export function App() {
 
       <Footer
         lang={lang}
-        onOpenAdminLogin={() => {
-          if (adminUser) {
-            setIsAdminDashboardOpen(true);
-          } else {
-            setIsAdminLoginOpen(true);
-          }
-        }}
         onStartTour={() => setIsTourOpen(true)}
+      />
+
+      {/* Mobile Bottom Navigation Bar (Visible on phones) */}
+      <MobileBottomNav
+        lang={lang}
+        onOpenAddModal={() => setIsAddModalOpen(true)}
+        onStartTour={() => setIsTourOpen(true)}
+        activeSection={activeSection}
+        setActiveSection={setActiveSection}
       />
 
       <BhajanDetailsModal

@@ -1,19 +1,18 @@
 import React from 'react';
-import { Flame, Shield, Compass, Heart } from 'lucide-react';
+import { Flame, Compass } from 'lucide-react';
 import { Language } from '../types';
 import { translations } from '../i18n/translations';
 
 interface FooterProps {
   lang: Language;
-  onOpenAdminLogin: () => void;
   onStartTour: () => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ lang, onOpenAdminLogin, onStartTour }) => {
+export const Footer: React.FC<FooterProps> = ({ lang, onStartTour }) => {
   const t = translations[lang];
 
   return (
-    <footer className="bg-stone-950 text-amber-100/80 border-t border-amber-600/30 pt-12 pb-8 px-4 sm:px-6">
+    <footer className="bg-stone-950 text-amber-100/80 border-t border-amber-600/30 pt-12 pb-20 md:pb-8 px-4 sm:px-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-stone-800">
           {/* Brand & Devotional Motto */}
@@ -38,18 +37,10 @@ export const Footer: React.FC<FooterProps> = ({ lang, onOpenAdminLogin, onStartT
           <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-semibold">
             <button
               onClick={onStartTour}
-              className="flex items-center space-x-1.5 text-amber-300 hover:text-white transition py-1 px-3 rounded-lg bg-stone-900 border border-stone-800"
+              className="flex items-center space-x-1.5 text-amber-300 hover:text-white transition py-1.5 px-3.5 rounded-lg bg-stone-900 border border-stone-800 active:scale-95"
             >
               <Compass className="w-4 h-4" />
               <span>{t.reopenTour}</span>
-            </button>
-
-            <button
-              onClick={onOpenAdminLogin}
-              className="flex items-center space-x-1.5 text-stone-400 hover:text-amber-300 transition py-1 px-3 rounded-lg bg-stone-900 border border-stone-800"
-            >
-              <Shield className="w-4 h-4" />
-              <span>{t.superAdminLogin}</span>
             </button>
           </div>
         </div>

@@ -61,7 +61,12 @@ This repository is pre-configured for deployment with **Render** hosting the Exp
    | :--- | :--- |
    | `VITE_API_URL` | Your Render backend URL (e.g., `https://ayyappa-bhajan-guide-backend.onrender.com`) |
 6. Click **"Deploy"**.
-7. Vercel will build and deploy your site in ~30 seconds, generating your live URL (e.g., `https://ayyappa-bhajan-guide.vercel.app`).
+7. Vercel will build and deploy your site in ~30 seconds, generating your live URL.
+
+### 🌟 Active Production Frontend:
+* **Live Vercel URL**: **[https://client-green-six-90.vercel.app](https://client-green-six-90.vercel.app)**
+* **Live Audio Asset**: `https://client-green-six-90.vercel.app/audio/ayyappa-devotional.mp3` (HTTP 200)
+* **Vercel Project Dashboard**: `https://vercel.com/jayasree3/client`
 
 ---
 

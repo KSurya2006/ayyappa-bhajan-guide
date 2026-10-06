@@ -22,6 +22,7 @@ export const loginLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skip: isBypass,
+  validate: { trustProxy: false },
   message: {
     success: false,
     error: 'Too many login attempts from this IP. Please try again after 15 minutes.'
@@ -35,6 +36,7 @@ export const submissionLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skip: isBypass,
+  validate: { trustProxy: false },
   message: {
     success: false,
     error: 'Submission limit reached for this hour. Please try again later.'
@@ -48,6 +50,7 @@ export const publicApiLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skip: isBypass,
+  validate: { trustProxy: false },
   message: {
     success: false,
     error: 'Too many requests. Please slow down.'
